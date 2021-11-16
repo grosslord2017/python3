@@ -13,4 +13,4 @@ for number in numbers:
     else:
         bufer_list.append(numb)
 
-print(' '.join(bufer_list))
+print(', '.join(bufer_list))
