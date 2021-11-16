@@ -2,13 +2,9 @@
 contained in a group of values.'''
 
 number = int(input("Enter the number to search: "))
-array = set(input("Enter the array: " ).split(', '))
-group = []
+array = input("Enter numbers where to search: " ).split(', ')
 
-for g in group:
-    g = int(g)
-    group.append(g)
-
+group = [int(x) for x in array]
 find = number in group
 
 print(f"{number} -> {group} : {find}")
