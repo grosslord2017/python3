@@ -2,5 +2,8 @@
 
 subsequence = input().split()
 
-print(list(subsequence))
-print(tuple(subsequence))
+new_list = list(subsequence)
+new_tuple = tuple(subsequence)
+
+print(f"List: {new_list}")
+print(f"Tuple: {new_tuple}")
