@@ -1,14 +1,12 @@
 '''Еhe script accepts lines until the user enters 'q' or 'Q', after which all entered lines will be concatenated'''
 
+number_strings = int(input("Enter number of strings: "))
+count = 0
 list_of_strings = []
 
-while True:
-    print("Enter the string or enter 'q' to exit: ")
-    row = input()
-    if row == 'q' or row == 'Q':
-        break
-    else:
-        list_of_strings.append(row)
+while number_strings > count:
+    row = input("Enter a string: ")
+    list_of_strings.append(row)
+    count += 1
 
-concat_strings = ' '.join(list_of_strings)
-print(concat_strings)
+print(''.join(list_of_strings))
