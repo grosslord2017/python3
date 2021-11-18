@@ -2,7 +2,7 @@
 contained in a group of values.'''
 
 number = int(input("Enter the number to search: "))
-array = input("Enter numbers where to search: " ).split(', ')
+array = input("Enter numbers where to search (format n, n1, n2,): ").split(', ')
 
 group = [int(x) for x in array]
 find = number in group
