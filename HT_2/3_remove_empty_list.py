@@ -1,12 +1,12 @@
 '''Написати скрипт, який видалить пусті елементи із списка.
 Список можна "захардкодити".'''
 
-a = [(), (), ('',), ('a', 'b'), ('a', 'b', 'c'), ('d')]
-b = []
-for i in a:
+hardcod = [(), (), ('',), ('a', 'b'), ('a', 'b', 'c'), ('d')]
+final = []
+for i in hardcod:
     if bool(i) == False:
         continue
     else:
-        b.append(i)
+        final.append(i)
 
-print(b)
+print(final)
