@@ -9,7 +9,10 @@ def calc(number_1, symbol, number_2):
     elif symbol == '*':
         print(int(number_1) * int(number_2))
     elif symbol == '/':
-        print(int(number_1) / int(number_2))
+        try:
+            print(int(number_1) / int(number_2))
+        except ZeroDivisionError:
+            print("На ноль делить нельзя))")
 
 expression = input('Enter your expression (in format a + b for example): \n').split()
 number_1, symbol, number_2 = expression
