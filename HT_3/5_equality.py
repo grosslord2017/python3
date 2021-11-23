@@ -11,7 +11,7 @@ def equality(x, y):
     if x > y:
         return f'{x} больше чем {y} на {x - y}'
     elif x < y:
-        return f'{y} больше чем {x} на {y - z}'
+        return f'{y} больше чем {x} на {y - x}'
     elif x == y:
         return f'{x} равно {y}'
 
