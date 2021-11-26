@@ -10,7 +10,6 @@ def number_of_idential(arr):
             result[str(i)] += 1
 
     out = out_result(result)
-
     return out
 
 
