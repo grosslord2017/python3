@@ -13,13 +13,16 @@
 P.S. Не забудьте використати блок try/except ;)'''
 
 class BadLogin(Exception):
-    msg_login = 'Login must be in the range from 3 to 50'
+    def __init__(self, msg):
+        self.msg_login = msg
 
 class BadPassShort(Exception):
-    msg_short = 'Pass is short'
+    def __init__(self, msg):
+        self.msg_short = msg
 
 class BadPassDigit(Exception):
-    msg_digit = 'Password must have at least one digit'
+    def __init__(self, msg):
+        self.msg_digit = msg
 
 def validation(username, password):
     if len(username) < 3 or len(username) > 50:
@@ -40,21 +43,18 @@ for login in logins:
         print(f'Password: {login[1]}')
         print('Status: OK')
         print('-' * 10)
-    except BadLogin:
+    except BadLogin as msg:
         print(f'Name: {login[0]}')
         print(f'Password: {login[1]}')
-        msg = BadLogin
         print('Status: ' + msg.msg_login)
         print('-' * 10)
-    except BadPassShort:
+    except BadPassShort as msg:
         print(f'Name: {login[0]}')
         print(f'Password: {login[1]}')
-        msg = BadPassShort
         print('Status: ' + msg.msg_short)
         print('-' * 10)
-    except BadPassDigit:
+    except BadPassDigit as msg:
         print(f'Name: {login[0]}')
         print(f'Password: {login[1]}')
-        msg = BadPassDigit
         print('Status: ' + msg.msg_digit)
         print('-' * 10)
