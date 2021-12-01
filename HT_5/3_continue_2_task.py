@@ -52,8 +52,4 @@ for login in logins:
         print(f'Password: {login[1]}')
         print('Status: ' + msg.msg_pass)
         print('-' * 10)
-    except BadPass as msg:
-        print(f'Name: {login[0]}')
-        print(f'Password: {login[1]}')
-        print('Status: ' + msg.msg_pass)
-        print('-' * 10)
+
