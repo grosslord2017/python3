@@ -5,27 +5,28 @@
    Якщо якийсь із параментів не відповідає вимогам - породити виключення із відповідним текстом.'''
 
 class BadLogin(Exception):
-    msg_login = 'Login must be in the range from 3 to 50'
+    def __init__(self, msg):
+        self.msg_login = msg
 
-class BadPassShort(Exception):
-    msg_short = 'Pass is short'
-
-class BadPassDigit(Exception):
-    msg_digit = 'Password must have at least one digit'
+class BadPass(Exception):
+    def __init__(self, msg):
+        self.msg_pass = msg
 
 
 def validation(username, password):
     if len(username) < 3 or len(username) > 50:
         raise BadLogin('Login must be in the range from 3 to 50')
     elif len(str(password)) < 8:
-        raise BadPassShort('Pass is short')
+        raise BadPass('Pass is short')
     elif bool([pas_wd for pas_wd in str(password) if pas_wd.isdigit()]) == False:
-        raise BadPassDigit('Password must have at least one digit')
+        raise BadPass('Password must have at least one digit')
+    elif bool([pas_wd for pas_wd in str(password) if pas_wd.isupper()]) == False:
+        raise BadPass('Еhe password must have at least one capital letter')
     else:
         return 'Registration successful'
 
 #validation('Vitalii', 12345)
-#validation('Valera', 'pass123word')
+validation('Valera', 'pAss123word')
 #validation('te', 'test')
 #validation('admin', 'admindjfhklla')
-validation('root', 99384775456)
+#validation('root', 99384775456)
