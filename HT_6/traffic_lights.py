@@ -28,6 +28,9 @@ def traffic_light(car, man='Red', count=4):
             man = 'Green'
             for i in range(count):
                 out_light(color, man)
+        elif color == 'Yellow' and man == 'Green':
+            for i in range(2):
+                out_light(color, man)
 
 
 
