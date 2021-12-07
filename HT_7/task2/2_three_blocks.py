@@ -8,6 +8,9 @@
    "вікно" символів відцентрувати щодо середини файла і взяти необхідну кількість. В разі необхідності заокруглення
    одного чи обох параметрів - дивіться на свій розсуд.'''
 
+class BadNumber(Exception):
+    def __init__(self, msg):
+        self.msg = msg
 
 def three_blocks(file_name, number):
     result = []
@@ -15,6 +18,8 @@ def three_blocks(file_name, number):
     length = len(text.read())   #длинна текста
     sd_1 = ((length // 2) - number - (number // 2)) #первый сдвиг до центра
     sd_2 = (length - (number * 3) - sd_1)   # второй сдвиг от центра
+    if length < number:
+        raise BadNumber('Число больше рядка!')
     text.close()
 
     text = open(file_name, 'rb')
