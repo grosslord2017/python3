@@ -18,7 +18,7 @@ def three_blocks(file_name, number):
     length = len(text.read())   #длинна текста
     sd_1 = ((length // 2) - number - (number // 2)) #первый сдвиг до центра
     sd_2 = (length - (number * 3) - sd_1)   # второй сдвиг от центра
-    if length < number:
+    if (length // 2) < number:
         raise BadNumber('Число больше рядка!')
     text.close()
 
@@ -35,7 +35,7 @@ def three_blocks(file_name, number):
 
 
 
-a = three_blocks('test.txt', 3)
+a = three_blocks('test.txt', 8)
 print(a)
 
 
