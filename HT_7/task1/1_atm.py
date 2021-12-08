@@ -55,22 +55,23 @@ def start():
         print('Спасибо что воспользовались нашим банкоматом!')
         exit()
 
-# def registration():
-#     login = input('Придумайте и введите логин: ')
-#     password = input('Придумайте и введите пароль: ')
-#     user = [login, password]
-#     registration_user = []
-#     with open('user.csv', 'r', encoding='utf-8') as file:
-#         reader = csv.reader(file)
-#         for i in reader:
-#             registration_user.append(i)
-#     for reg_user in registration_user:
-#         if login == reg_user[0]:
-#             raise LoginIsBusy('Логин уже занят')
-#     with open('user.csv', 'a', encoding='utf-8') as file:
-#         writer = file.write(str(user), delimiter=',')
-#     with open(login + '.txt', 'w') as file:
-#         file.write('0')
+def registration():
+    login = input('Придумайте и введите логин: ')
+    password = input('Придумайте и введите пароль: ')
+    user = [str(login), str(password)]
+    registration_user = []
+    with open('user.csv', 'r', encoding='utf-8') as file:
+        reader = csv.reader(file)
+        for i in reader:
+            registration_user.append(i)
+    for reg_user in registration_user:
+        if login == reg_user[0]:
+            raise LoginIsBusy('Логин уже занят')
+    with open('user.csv', 'a', encoding='utf-8') as file:
+        writer = csv.writer(file)
+        writer.writerow(user)
+    with open(login + '.txt', 'w') as file:
+        file.write('0')
 
 def autorization(login, password):
     user = [str(login), str(password)]
@@ -125,19 +126,19 @@ def transactions(login, number, text):
     with open(login + '_transaction.txt', 'a') as file:
         writer = file.write(f'{datetime.datetime.now()}: {text} {number} грн.\n')
 
-# print('Привеитствую')
-# print('Если вы желаете авторизироватся - введите 1')
-# print('Если вы желаете зарегистрироватся - введите 2')
-# print('Для выхода - введите 3')
-#
-# reg = input('Ваш выбор: ')
-# if reg == '1':
-#     while True:
-#         start()
-# elif reg == '2':
-#     registration()
-# else:
-#     exit()
+print('Привеитствую')
+print('Если вы желаете авторизироватся - введите 1')
+print('Если вы желаете зарегистрироватся - введите 2')
+print('Для выхода - введите 3')
 
-while True:
-    start()
+reg = input('Ваш выбор: ')
+if reg == '1':
+    while True:
+        start()
+elif reg == '2':
+    registration()
+else:
+    exit()
+
+# while True:
+#     start()
