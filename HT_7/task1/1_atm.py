@@ -75,7 +75,7 @@ def start():
 def autorization(login, password):
     user = [str(login), str(password)]
     registration_user = []
-    with open('task1/user.csv', 'r', encoding='utf-8') as file:
+    with open('user.csv', 'r', encoding='utf-8') as file:
         reader = csv.reader(file)
         for i in reader:
             registration_user.append(i)
@@ -85,33 +85,33 @@ def autorization(login, password):
         raise BadOuth('Не верный логин или пароль!!!')
 
 def show_balance(login):
-    with open('task1/' + login + '.txt', 'r') as file:
+    with open(login + '.txt', 'r') as file:
         balance = file.read()
         print(f'На вашем счету {balance} грн.')
     cont_inue()
 
 def add_balance(login, number):
-    with open('task1/' + login + '.txt', 'r') as file:
+    with open(login + '.txt', 'r') as file:
         money = int(file.read())
-    with open('task1/' + login + '.txt', 'w') as file:
+    with open(login + '.txt', 'w') as file:
         file.write(str(money + number))
     text = 'Ваш счет пополнен на'
     transactions(login, number, text)
     cont_inue()
 
 def withdraw_balance(login, number):
-    with open('task1/' + login + '.txt', 'r') as file:
+    with open(login + '.txt', 'r') as file:
         money = int(file.read())
-    with open('task1/' + login + '.txt', 'w') as file:
+    with open(login + '.txt', 'w') as file:
         if money < number:
             print('Не достаточно денег на счету.')
             file.write(str(money))
-            text = 'Неудачная опытка списать '
+            text = 'Неудачная попытка списать '
             transactions(login, number, text)
         else:
             file.write(str(money - number))
-    text = 'С Вашего счета списано'
-    transactions(login, number, text)
+            text = 'С Вашего счета списано'
+            transactions(login, number, text)
     cont_inue()
 
 def cont_inue():
@@ -122,7 +122,7 @@ def cont_inue():
         exit()
 
 def transactions(login, number, text):
-    with open('task1/' + login + '_transaction.txt', 'a') as file:
+    with open(login + '_transaction.txt', 'a') as file:
         writer = file.write(f'{datetime.datetime.now()}: {text} {number} грн.\n')
 
 # print('Привеитствую')
