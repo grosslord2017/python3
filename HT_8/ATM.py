@@ -3,7 +3,8 @@
 логин: ADMIN
 пароль: ADMIN'''
 
-import csv, json
+import csv
+import json
 import datetime as dt
 import os
 
@@ -30,7 +31,9 @@ def registration():
             registration_user.append(i)
     for reg_user in registration_user:
         if login == reg_user[0]:
-            raise LoginIsBusy('Логин уже занят')
+            # raise LoginIsBusy('Логин уже занят')
+            print('--- Логин уже занят ---')
+            break
     with open(path + 'user.csv', 'a', encoding='utf-8') as file:
         writer = csv.writer(file)
         writer.writerow(user)
@@ -38,23 +41,28 @@ def registration():
         file.write('0')
 
 def autorization():
-    login = input('Введите ваш логин: ')
-    password = input('Введите ваш пароль: ')
-    user = [login, password]
-    registration_user = []
-    with open(path + 'user.csv', 'r', encoding='utf-8') as file:
-        reader = csv.reader(file)
-        for i in reader:
-            registration_user.append(i)
-    if user == ['ADMIN', 'ADMIN']:
-        print('STATUS INCASATION')
-        return login, password, True
-    elif user in registration_user:
-        print('STATUS OK')
+    count = 3
+    for i in range(3):
+        login = input('Введите ваш логин: ')
+        password = input('Введите ваш пароль: ')
+        user = [login, password]
+        registration_user = []
+        with open(path + 'user.csv', 'r', encoding='utf-8') as file:
+            reader = csv.reader(file)
+            for i in reader:
+                registration_user.append(i)
+        if user == ['ADMIN', 'ADMIN']:
+            print('STATUS INCASATION')
+            return login, password, True
+        elif user in registration_user:
+            print('STATUS OK')
+            return login, password, False
+        else:
+            count -= 1
+            print(f'--- Логин или пароль не верный, попыток осталось {count} ---')
+            continue
 
-        return login, password, False
-    else:
-        raise BadOuth('Не верный логин или пароль!!!')
+    raise BadOuth('Не верный логин или пароль!!!')
 
 # Ниже код для работы инкасатора.
 def menu_start():
@@ -74,7 +82,7 @@ def menu_start():
         elif choice == '3':
             exit()
         else:
-            raise Problem('НЕТ ТАКОГО ВАРИАНТА.')
+            print('НЕТ ТАКОГО ВАРИАНТА.')
 
 def menu_incasation():
     while True:
@@ -89,7 +97,8 @@ def menu_incasation():
         elif choice_inc == '3':
             exit()
         else:
-            raise Problem('Таких вариантов нет!')
+            print('Таких вариантов нет!')
+            continue
 
 def show_balance_atm():
     with open(path + 'nominal.json', 'r') as file:
@@ -136,7 +145,8 @@ def menu_user(login):
             print('Спасибо что воспользовались нашим банкоматом!')
             exit()
         else:
-            raise Problem('НЕТ ТАКОГО ВАРИАНТА')
+            print('НЕТ ТАКОГО ВАРИАНТА')
+            continue
 
 def show_balance(login):
     with open(path + login + '.txt', 'r') as file:
@@ -151,7 +161,7 @@ def add_balance(login):
         how = int(input('На сколько желаете пополнить?: '))
     with open(path + login + '.txt', 'w') as file:
         file.write(str(balance + abs(how)))
-        text = f' Ваш счет пополнен на {how} грн.'
+        text = f'Your personal account has been credited to {how} UAH.'
         transaction(login, text)
 
 def withdraw_balance(login):
@@ -169,13 +179,13 @@ def withdraw_balance(login):
     sum_in_atm = sum([int(k) * v for k, v in reader.items()])
     nom = [int(i) for i in reader.keys() if reader[i] != 0]
     if how > balance:
-        text = ' Не достаточно денег на балансе!!!'
+        text = 'Not enough money on the balance sheet!!!'
         transaction(login, text)
-        raise Problem('НЕ ДОСТАТОЧНО ДЕНЕГ НА БАЛАНСЕ!')
+        print('НЕ ДОСТАТОЧНО ДЕНЕГ НА БАЛАНСЕ!')
     elif how > sum_in_atm:
-        text = ' Банкомат не может выдать такую сумму!!!'
+        text = 'The ATM cannot dispense this amount of money!!!'
         transaction(login, text)
-        raise Problem('НЕ ДОАСТАТОЧНО ДЕНЕГ В БАНКОМАТЕ!')
+        print('НЕ ДОАСТАТОЧНО ДЕНЕГ В БАНКОМАТЕ!')
     else:
         out = {'1000': 0, '500': 0, '200': 0, '100': 0, '50': 0, '20': 0, '10': 0}
         inquiry = how
@@ -264,18 +274,19 @@ def withdraw_balance(login):
                 file.write(json.dumps(reader))
             with open(path + login + '.txt', 'w') as file:
                 file.write(str(balance - how))
-            text = f' С вашего счета списано {how} грн.'
+            text = f'{how} UAH was debited from your account'
             transaction(login, text)
         else:
-            text = ' Нет соответствующих купюр в банкомате!!!'
+            text = 'There are no matching bills at the ATM!!!'
             transaction(login, text)
-            raise Problem('БАНКОМАТ НЕ МОЖЕТ ВЫДАТЬ ДАННУЮ СУММУ!!!')
+            print('БАНКОМАТ НЕ МОЖЕТ ВЫДАТЬ ДАННУЮ СУММУ!!!')
 
 # Общие блоки кода
 def transaction(login, text):
-    with open(path + login + '_transaction.txt', 'a') as file:
-        massage = f'{dt.datetime.now()}: {text}\n'
-        file.write(massage)
+    with open(path + login + '_transaction.jsonlines', 'a', encoding='utf-8') as file:
+        massage = {str(dt.datetime.now()): text}
+        json.dump(massage, file)
+        file.write('\n')
 
 
 
