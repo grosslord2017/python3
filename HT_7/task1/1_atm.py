@@ -100,7 +100,7 @@ def add_balance(login, number):
     with open(path + login + '.txt', 'w') as file:
         file.write(str(money + number))
     text = f'Your account is replenished by {number} UAH'
-    transaction(login, number, text)
+    transaction(login, text)
     cont_inue()
 
 def withdraw_balance(login, number):
@@ -111,11 +111,11 @@ def withdraw_balance(login, number):
             print('Не достаточно денег на счету.')
             file.write(str(money))
             text = 'Not enough money in the account'
-            transaction(login, number, text)
+            transaction(login, text)
         else:
             file.write(str(money - abs(number)))
             text = f'{number} UAH was debited from your account'
-            transaction(login, number, text)
+            transaction(login, text)
     cont_inue()
 
 def cont_inue():
