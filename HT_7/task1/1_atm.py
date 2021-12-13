@@ -23,7 +23,9 @@
       - далі - фантазія і креатив :)'''
 
 import csv
-import datetime
+import json
+import datetime as dt
+import os
 
 class BadOuth(Exception):
     def __init__(self, msg):
@@ -33,6 +35,7 @@ class LoginIsBusy(Exception):
     def __init__(self, msg):
         self.msg = msg
 
+path = os.path.dirname(os.path.realpath(__file__)) + '/'
 def start():
     print('Пожалуйста авторизируйтесь!')
     login = input('Введите ваш логин: ')
@@ -60,23 +63,23 @@ def registration():
     password = input('Придумайте и введите пароль: ')
     user = [str(login), str(password)]
     registration_user = []
-    with open('user.csv', 'r', encoding='utf-8') as file:
+    with open(path + 'user.csv', 'r', encoding='utf-8') as file:
         reader = csv.reader(file)
         for i in reader:
             registration_user.append(i)
     for reg_user in registration_user:
         if login == reg_user[0]:
             raise LoginIsBusy('Логин уже занят')
-    with open('user.csv', 'a', encoding='utf-8') as file:
+    with open(path + 'user.csv', 'a', encoding='utf-8') as file:
         writer = csv.writer(file)
         writer.writerow(user)
-    with open(login + '.txt', 'w') as file:
+    with open(path + login + '.txt', 'w') as file:
         file.write('0')
 
 def autorization(login, password):
     user = [str(login), str(password)]
     registration_user = []
-    with open('user.csv', 'r', encoding='utf-8') as file:
+    with open(path + 'user.csv', 'r', encoding='utf-8') as file:
         reader = csv.reader(file)
         for i in reader:
             registration_user.append(i)
@@ -86,33 +89,33 @@ def autorization(login, password):
         raise BadOuth('Не верный логин или пароль!!!')
 
 def show_balance(login):
-    with open(login + '.txt', 'r') as file:
+    with open(path + login + '.txt', 'r') as file:
         balance = file.read()
         print(f'На вашем счету {balance} грн.')
     cont_inue()
 
 def add_balance(login, number):
-    with open(login + '.txt', 'r') as file:
+    with open(path + login + '.txt', 'r') as file:
         money = int(file.read())
-    with open(login + '.txt', 'w') as file:
+    with open(path + login + '.txt', 'w') as file:
         file.write(str(money + number))
-    text = 'Ваш счет пополнен на'
-    transactions(login, number, text)
+    text = f'Your account is replenished by {number} UAH'
+    transaction(login, number, text)
     cont_inue()
 
 def withdraw_balance(login, number):
-    with open(login + '.txt', 'r') as file:
+    with open(path + login + '.txt', 'r') as file:
         money = int(file.read())
-    with open(login + '.txt', 'w') as file:
+    with open(path + login + '.txt', 'w') as file:
         if money < number:
             print('Не достаточно денег на счету.')
             file.write(str(money))
-            text = 'Неудачная попытка списать '
-            transactions(login, number, text)
+            text = 'Not enough money in the account'
+            transaction(login, number, text)
         else:
-            file.write(str(money - number))
-            text = 'С Вашего счета списано'
-            transactions(login, number, text)
+            file.write(str(money - abs(number)))
+            text = f'{number} UAH was debited from your account'
+            transaction(login, number, text)
     cont_inue()
 
 def cont_inue():
@@ -122,9 +125,14 @@ def cont_inue():
     if yes_no in ['N', 'n', 'no', 'NO', 'No']:
         exit()
 
-def transactions(login, number, text):
-    with open(login + '_transaction.txt', 'a') as file:
-        writer = file.write(f'{datetime.datetime.now()}: {text} {number} грн.\n')
+def transaction(login, text):
+    with open(path + login + '_transaction.jsonlines', 'a', encoding='utf-8') as file:
+        massage = {str(dt.datetime.now()): text}
+        json.dump(massage, file)
+        file.write('\n')
+
+
+
 
 print('Привеитствую')
 print('Если вы желаете авторизироватся - введите 1')
@@ -139,6 +147,3 @@ elif reg == '2':
     registration()
 else:
     exit()
-
-# while True:
-#     start()
