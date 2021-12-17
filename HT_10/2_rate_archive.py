@@ -51,7 +51,7 @@ def rate_archive():
         for r in rate:
             if 'currency' not in [i for i in r.keys()]:
                 continue
-            elif r['currency'] == currency:
+            elif r['currency'] == currency.upper():
                 print(f'Date: {new_moment}')
                 if nbu == 0:
                     print(f'NBU: {r["saleRateNB"]}     ------')
