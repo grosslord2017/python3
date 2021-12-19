@@ -50,8 +50,10 @@ def default_atm():
         ('10', 10)
     ]
     for nominal in nominals:
-        cur.execute('INSERT INTO balance_atm (nominal, number) VALUES (?, ?)', nominal)
-        con.commit()
+        exists = cur.execute('''SELECT nominal FROM balance_atm WHERE nominal=?''', (nominal[0],)).fetchone()
+        if not exists:
+            cur.execute('INSERT INTO balance_atm (nominal, number) VALUES (?, ?)', nominal)
+            con.commit()
 
 def create_table():
     # users

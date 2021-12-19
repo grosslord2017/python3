@@ -56,13 +56,12 @@ def rate_archive():
                 if nbu == 0:
                     print(f'NBU: {r["saleRateNB"]}     ------')
                 else:
-                    print(f'NBU: {r["saleRateNB"]}     {float(r["saleRateNB"]) - nbu}')
+                    print(f'NBU: {r["saleRateNB"]}     {round(float(r["saleRateNB"]) - nbu, 4)}')
                 print('-' * 30)
                 nbu = float(r["saleRateNB"])
                 sleep(1)
 
-        a = new_moment_format + delta
-        new_moment_format = a
+        new_moment_format = new_moment_format + delta
         temp = str(dt.datetime.date(new_moment_format)).split('-')
         new_moment = f'{temp[2]}.{temp[1]}.{temp[0]}'
     exit()

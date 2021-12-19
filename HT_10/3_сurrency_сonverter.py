@@ -10,10 +10,23 @@ class BadInput(Exception):
     def __init__(self, msg):
         self.msg = msg
 
-def date_format():
+# def date_now():
+#     date_now = dt.datetime.now()
+#     date_now = str(dt.datetime.date(date_now)).split('-')
+#     now = f'{date_now[2]}.{date_now[1]}.{date_now[0]}'
+#     return now
+
+def date_now():
     date_now = dt.datetime.now()
-    date_now = str(dt.datetime.date(date_now)).split('-')
-    now = f'{date_now[2]}.{date_now[1]}.{date_now[0]}'
+    return date_format(date_now)
+
+def date_yesterday():
+    date_yesterday = dt.datetime.now() - dt.timedelta(days=1)
+    return date_format(date_yesterday)
+
+def date_format(date):
+    date = str(dt.datetime.date(date)).split('-')
+    now = f'{date[2]}.{date[1]}.{date[0]}'
     return now
 
 def list_of_acceptable_currency(rate):
@@ -33,14 +46,20 @@ def user_input(acceptable):
             print('НЕ КОРРЕКТНЫЕ ДАННЫЕ')
     raise BadInput('НЕ КОРРЕКТНЫЕ ДАННЫЕ')
 
-
 def currency_converter():
-    url = 'https://api.privatbank.ua/p24api/exchange_rates?json&date=' + f'{date_format()}'
+    url = 'https://api.privatbank.ua/p24api/exchange_rates?json&date=' + f'{date_now()}'
     response = requests.get(url)
     exchange_rates = json.loads(response.text)
     rate = exchange_rates['exchangeRate'][1:]
     print('Cписок конвертируемых валют:')
     acceptable = list_of_acceptable_currency(rate)
+    if not acceptable:
+        url = 'https://api.privatbank.ua/p24api/exchange_rates?json&date=' + f'{date_yesterday()}'
+        response = requests.get(url)
+        exchange_rates = json.loads(response.text)
+        rate = exchange_rates['exchangeRate'][1:]
+        print('Cписок конвертируемых валют:')
+        acceptable = list_of_acceptable_currency(rate)
     print(acceptable)
 
     currancy_start, curransy_result, sum_to_convert = user_input(acceptable)
