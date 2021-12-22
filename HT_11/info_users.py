@@ -59,14 +59,16 @@ def info_about_post(id_posts):
     choice = input('Your choice: ')
     if choice not in id_posts:
         print('No such ID!')
-    response = requests.get(url + f'posts/{choice}')
-    post = json.loads(response.text)
-    print('ID:'.ljust(8) + f'{post["id"]}')
-    print('TITLE:'.ljust(8) + f'{post["title"]}')
-    print(f'BODY:\n{post["body"]}')
-    print('-' * 5)
+        return
+    else:
+        response = requests.get(url + f'posts/{choice}')
+        post = json.loads(response.text)
+        print('ID:'.ljust(8) + f'{post["id"]}')
+        print('TITLE:'.ljust(8) + f'{post["title"]}')
+        print(f'BODY:\n{post["body"]}')
+        print('-' * 5)
 
-    return choice
+        return choice
 
 # shows numbers of comments and ID_comments
 def comments(id_post):
@@ -119,32 +121,34 @@ def menu():
     if id not in id_users:
         print('No such ID')
     else:
-        print('What do you want to see about user?')
-        print('1 - see all information of this user')
-        print('2 - see all posts this user')
-        print('3 - see list of completed tasks and not completed')
-        print('4 - see URL random picture')
-        print('5 - exit the program')
-        choise = input('Yur choice: ')
-        if choise == '1':
-            print('-' * 50)
-            info_about_user(id)
-            print('-' * 50)
-        elif choise == '2':
-            # id_posts = show_posts(id)
-            # id_post = info_about_post(id_posts)
-            # comments(id_post)
-            comments(info_about_post(show_posts(id)))
-        elif choise == '3':
-            todos(id)
-        elif choise == '4':
-            show_picture_url(return_albums(id))
-        elif choise == '5':
-            exit()
-        else:
-            print('You wrong, there is no such option!!!')
-            print('*' * 30)
+        while True:
+            print('What do you want to see about user?')
+            print('1 - see all information of this user')
+            print('2 - see all posts this user')
+            print('3 - see list of completed tasks and not completed')
+            print('4 - see URL random picture')
+            print('5 - exit the program')
+            choise = input('Yur choice: ')
+            if choise == '1':
+                print('-' * 50)
+                info_about_user(id)
+                print('-' * 50)
+            elif choise == '2':
+                id_posts = show_posts(id)
+                id_post = info_about_post(id_posts)
+                if id_post:
+                    comments(id_post)
+                else:
+                    continue
+            elif choise == '3':
+                todos(id)
+            elif choise == '4':
+                show_picture_url(return_albums(id))
+            elif choise == '5':
+                exit()
+            else:
+                print('You wrong, there is no such option!!!')
+                print('*' * 30)
 
 
-while True:
-    menu()
+menu()
