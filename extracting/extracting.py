@@ -21,7 +21,8 @@ from time import sleep
 import openpyxl
 import os
 
-path_driver = '/home/chromedriver'
+# path_driver = '/home/chromedriver'
+path_driver = os.path.dirname(os.path.realpath(__file__)) + '/chromedriver'
 path = os.path.dirname(os.path.realpath(__file__)) + '/output/'
 os.makedirs(path, exist_ok=True)
 # name_agency = 'Department of Labor'
