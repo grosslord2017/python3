@@ -1,0 +1,5 @@
+selenium==4.1.0
+openpyxl==3.0.9
+
+operation system linuxMint 20.2
+googleChrome Version 96.0.4664.110 (Official Build) (64-bit)
