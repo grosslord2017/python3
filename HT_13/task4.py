@@ -11,6 +11,9 @@ class Figure(object):
     def __init__(self, color):
         self.color = color
 
+    def change_color(self, color):
+        self.color = color
+
 class Oval(Figure):
 
     def __init__(self, color, small_axis, major_axis):
@@ -25,7 +28,7 @@ class Square(Figure):
         self.side = side
 
 
-obj_1 = Figure('yellow')
-obj_2 = Oval('red', 5, 7)
-print(obj_2.color)
-print(obj_2.small_axis)
+# obj_1 = Figure('yellow')
+# obj_2 = Oval('red', 5, 7)
+# print(obj_2.color)
+# print(obj_2.small_axis)

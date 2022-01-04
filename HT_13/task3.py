@@ -2,12 +2,13 @@
 значенням white і метод для зміни кольору фігури, а його підкласи «овал» (oval) і «квадрат» (square) містять
 методи __init__ для завдання початкових розмірів об'єктів при їх створенні.'''
 
+
 class Figure(object):
 
     color = 'white'
 
     def change_color(self, color):
-        Figure.color = color
+        self.color = color
 
 class Oval(Figure):
 
@@ -19,6 +20,7 @@ class Square(Figure):
 
     def __init__(self, side):
         self.side = side
+
 
 
 obj = Figure()
