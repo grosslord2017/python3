@@ -1,0 +1,9 @@
+rpa==1.45.0
+rpaframework==12.2.0
+rpaframework-core==6.5.1
+rpaframework-dialogs==0.4.2
+rpaframework-pdf==1.30.4
+
+
+operation system linuxMint 20.2
+googleChrome Version 96.0.4664.110 (Official Build) (64-bit)
