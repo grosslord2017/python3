@@ -17,12 +17,14 @@ class Problem(Exception):
 
 path = os.path.dirname(os.path.realpath(__file__)) + '/'
 
-# Сlass creates a database with standard tables and users
+
 class StartDbAtm(object):
     '''Сlass creates a database with standard tables and users'''
     def __init__(self):
         self.con = sqlite3.connect('ATM.db')
-        self.cur = self.con
+        self.cur = self.con.cursor()
+        self.create_table()
+        self.default_users()
 
     def default_users(self):
         users = [
@@ -93,8 +95,9 @@ class StartDbAtm(object):
 
 class Authorization(object):
 
-    def __init__(self, cur):
+    def __init__(self, cur, con):
         self.cur = cur
+        self.con = con
 
     def autorization(self):
         count = 3
@@ -127,38 +130,16 @@ class Authorization(object):
             StartDbAtm().con.commit()
             user_id = self.cur.execute('''SELECT id FROM users WHERE username=?''', (user[0],)).fetchone()[0]
             self.cur.execute('INSERT INTO balance (user_id, amount) VALUES (?, ?);', (user_id, 0))
-            db.con.commit()
+            self.con.commit()
             print('--- User Created saccess. ---')
         else:
             print('--- Login in busy, please try again. ---')
 
 class User(object):
-    def __init__(self, cur, login):
+    def __init__(self, cur, con, login):
         self.login = login
         self.cur = cur
-
-    def menue_user(self):
-        while True:
-            print('1 - view the balance.')
-            print('2 - add in to your balance.')
-            print('3 - withdrawing from the balance.')
-            print('4 - return to the previous menu.')
-            print('5 - exit program.')
-            choice = input('Your choice: ')
-            if choice == '1':
-                self.show_balance()
-            elif choice == '2':
-                self.add_balance()
-            elif choice == '3':
-                self.withdraw_balance()
-            elif choice == '4':
-                break
-            elif choice == '5':
-                print('Thank you for using our ATM!')
-                exit()
-            else:
-                print('THERE IS NO SUCH OPTION')
-                continue
+        self.con = con
 
     def show_balance(self):
         id_user = self.cur.execute('SELECT id FROM users WHERE username=?', (self.login,)).fetchone()[0]
@@ -173,9 +154,9 @@ class User(object):
         how = int(input('How much do you want to top up your account?: '))
         result = balance_user + abs(how)
         self.cur.execute('UPDATE balance SET amount=? WHERE user_id=?', (result, id_user))
-        db.con.commit()
+        self.con.commit()
         text = f'На Ваш баланс внесено {how} ГРН.'
-        atm.transaction(self.login, text)
+        Atm(self.cur, self.con).transaction(self.login, text)
 
     def withdraw_balance(self):
         id_user = self.cur.execute('SELECT id FROM users WHERE username=?', (self.login,)).fetchone()[0]
@@ -195,11 +176,11 @@ class User(object):
         if how > balance_user:
             text = 'Не достаточно денег на Вашем балансе!'
             print('NOT ENOUGH MONEY INTO YOUR BALANCE!')
-            atm.transaction(self.login, text)
+            Atm(self.cur, self.con).transaction(self.login, text)
         elif how > balance_atm:
             text = 'Банкомат не может выдать такую сумму!'
             print('NOT ENOUGH MONEY IN ATM!')
-            atm.transaction(self.login, text)
+            Atm(self.cur, self.con).transaction(self.login, text)
         else:
             out = {'1000': 0, '500': 0, '200': 0, '100': 0, '50': 0, '20': 0, '10': 0}
             inquiry = how
@@ -289,37 +270,22 @@ class User(object):
                     what_is_nominal_list.append((v, k))
                 for nom in what_is_nominal_list:
                     self.cur.execute('UPDATE balance_atm SET number=? WHERE nominal=?', nom)
-                    db.con.commit()
+                    self.con.commit()
 
                 result_after = balance_user - sum(result)
                 self.cur.execute('UPDATE balance SET amount=? WHERE user_id=?', (result_after, id_user))
-                db.con.commit()
+                self.con.commit()
                 text = f'{how} грн снято с Вашего баланса.'
-                atm.transaction(self.login, text)
+                Atm(self.cur, self.con).transaction(self.login, text)
             else:
                 text = 'There are no matching bills at the ATM!!!'
-                atm.transaction(self.login, text)
+                Atm(self.cur, self.con).transaction(self.login, text)
                 print('ATM CANNOT DISPOSE THIS AMOUNT !!!')
 
 class Incasation(object):
-    def __init__(self, cur):
+    def __init__(self, cur, con):
         self.cur = cur
-
-    def menu_incasation(self):
-        while True:
-            print('1 - view the ATM balance')
-            print('2 - add in to ATM')
-            print('3 - exit')
-            choice_inc = input('Your choice: ')
-            if choice_inc == '1':
-                self.show_balance()
-            elif choice_inc == '2':
-                self.add_balance()
-            elif choice_inc == '3':
-                exit()
-            else:
-                print('There are no such options!')
-                continue
+        self.con = con
 
     def add_balance(self):
         nominals = self.cur.execute('SELECT * FROM balance_atm').fetchall()
@@ -336,7 +302,7 @@ class Incasation(object):
                 continue
             nominal[addition[0]] += abs(int(addition[1]))
             self.cur.execute('UPDATE balance_atm SET number=? WHERE nominal=?', (nominal[addition[0]], addition[0]))
-            db.con.commit()
+            self.con.commit()
 
     def show_balance(self):
         nominals = self.cur.execute('SELECT * FROM balance_atm').fetchall()
@@ -350,8 +316,9 @@ class Incasation(object):
         print('*' * 50)
 
 class Atm(object):
-    def __init__(self, cur):
+    def __init__(self, cur, con):
         self.cur = cur
+        self.con = con
 
     def menue_start(self):
         while True:
@@ -361,23 +328,68 @@ class Atm(object):
             print('4 - exit')
             choice = input('Your choice: ')
             if choice == '1':
-                person = Authorization(self.cur)
-                person.registration()
+                # person = Authorization(self.cur, self.con)
+                # person.registration()
+                Authorization(self.cur, self.con).registration()
             elif choice == '2':
-                person = Authorization(self.cur)
-                login, incasation = person.autorization()
+                # person = Authorization(self.cur, self.con)
+                # login, incasation = person.autorization()
+                login, incasation = Authorization(self.cur, self.con).autorization()
                 if incasation:
-                    incasation = Incasation(db.cur)
-                    incasation.menu_incasation()
+                    # incasation = Incasation(self.cur)
+                    # incasation.menu_incasation()
+                    self.menue_incasation()
                 else:
-                    user = User(self.cur, login)
-                    user.menue_user()
+                    # user = User(self.cur, login)
+                    # user.menue_user()
+                    self.menue_user(login)
             elif choice == '3':
                 self.show_currency()
             elif choice == '4':
                 exit()
             else:
                 print('there is no such option!')
+
+    def menue_user(self, login):
+        user = User(self.cur, self.con, login)
+        while True:
+            print('1 - view the balance.')
+            print('2 - add in to your balance.')
+            print('3 - withdrawing from the balance.')
+            print('4 - return to the previous menu.')
+            print('5 - exit program.')
+            choice = input('Your choice: ')
+            if choice == '1':
+                user.show_balance()
+            elif choice == '2':
+                user.add_balance()
+            elif choice == '3':
+                user.withdraw_balance()
+            elif choice == '4':
+                break
+            elif choice == '5':
+                print('Thank you for using our ATM!')
+                exit()
+            else:
+                print('THERE IS NO SUCH OPTION')
+                continue
+
+    def menue_incasation(self):
+        incasation = Incasation(self.cur, self.con)
+        while True:
+            print('1 - view the ATM balance')
+            print('2 - add in to ATM')
+            print('3 - exit')
+            choice_inc = input('Your choice: ')
+            if choice_inc == '1':
+                incasation.show_balance()
+            elif choice_inc == '2':
+                incasation.add_balance()
+            elif choice_inc == '3':
+                exit()
+            else:
+                print('There are no such options!')
+                continue
 
     def show_currency(self):
         url = 'https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=5'
@@ -395,14 +407,13 @@ class Atm(object):
         text = text
         time = str(dt.datetime.now())
         self.cur.execute('INSERT INTO transactions (user, date, massage) VALUES (?, ?, ?)', (login, time, text))
-        db.con.commit()
+        self.con.commit()
 
 
-
+def start():
+    db = StartDbAtm()
+    atm = Atm(db.cur, db.con)
+    atm.menue_start()
 
 if __name__ == '__main__':
-    db = StartDbAtm()
-    db.create_table()
-    db.default_users()
-    atm = Atm(db.cur)
-    atm.menue_start()
+    start()
