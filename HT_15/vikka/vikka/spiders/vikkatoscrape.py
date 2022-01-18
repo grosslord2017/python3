@@ -20,8 +20,6 @@ class VikkatoscrapeSpider(scrapy.Spider):
     start_urls = ['https://vikka.ua/']
     user_date = None
     save_path = Path(__file__).parent.parent / 'news'
-    news_link = None
-    # start_url = None
 
     def start_requests(self):
         self.user_date = input('enter date in format YYYY/MM/DD:' )
@@ -34,10 +32,8 @@ class VikkatoscrapeSpider(scrapy.Spider):
     def parse_vikka_page(self, response):
         soup = BeautifulSoup(response.text, 'lxml')
         for news in soup.select('ul.cat-posts-wrap li.item-cat-post'):
-            self.news_link = self.all_news_link(news) # pars first page and return link to news
-            # if self.news_link:
-            #     yield scrapy.Request(url=self.news_link, callback=self.parse_url_page)
-            yield scrapy.Request(url=self.news_link, callback=self.parse_url_page)
+            news_link = self.all_news_link(news) # pars first page and return link to news
+            yield scrapy.Request(url=news_link, callback=self.parse_url_page)
         try:
             button_url = soup.select_one('.nav-links a.next').get('href')
             if button_url is not None:
@@ -57,9 +53,8 @@ class VikkatoscrapeSpider(scrapy.Spider):
         item['title'] = soup.select_one('div .post-container .post-title').text
         item['text'] = soup.select_one('div .post-container .entry-content').text
         item['tags'] = self.page_tags(soup)
-        item['url'] = self.news_link
+        item['url'] = str(response).split(' ')[1].rstrip('>')
         self.writer_item(item)
-        # button = soup.select_one('.nav-links .next').get('href')
         return item
 
     # format in correct tags
