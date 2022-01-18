@@ -18,8 +18,10 @@ class VikkatoscrapeSpider(scrapy.Spider):
     name = 'vikkatoscrape'
     allowed_domains = ['vikka.ua']
     start_urls = ['https://vikka.ua/']
-    user_date = ''
+    user_date = None
     save_path = Path(__file__).parent.parent / 'news'
+    news_link = None
+    # start_url = None
 
     def start_requests(self):
         self.user_date = input('enter date in format YYYY/MM/DD:' )
@@ -32,9 +34,15 @@ class VikkatoscrapeSpider(scrapy.Spider):
     def parse_vikka_page(self, response):
         soup = BeautifulSoup(response.text, 'lxml')
         for news in soup.select('ul.cat-posts-wrap li.item-cat-post'):
-            news_link = self.all_news_link(news) # pars first page and return link to news
-            if news_link:
-                yield scrapy.Request(url=news_link, callback=self.parse_url_page)
+            self.news_link = self.all_news_link(news) # pars first page and return link to news
+            # if self.news_link:
+            #     yield scrapy.Request(url=self.news_link, callback=self.parse_url_page)
+            yield scrapy.Request(url=self.news_link, callback=self.parse_url_page)
+
+        button_url = soup.select_one('.nav-links .next').get('href')
+        if button_url is not None:
+            yield scrapy.Request(url=button_url, callback=self.parse_vikka_page)
+
 
     # collect all news in selected day
     def all_news_link(self, news_soup):
@@ -43,19 +51,13 @@ class VikkatoscrapeSpider(scrapy.Spider):
     # pars every news
     def parse_url_page(self, response):
         soup = BeautifulSoup(response.text, 'lxml')
-        # all_info = {
-        #     'title': soup.select_one('div .post-container .post-title').text,
-        #     'text': soup.select_one('div .post-container .entry-content').text,
-        #     'tags': self.page_tags(soup),
-        #     'url': response
-        # }
-        # yield all_info
         item = NewsItem()
         item['title'] = soup.select_one('div .post-container .post-title').text
         item['text'] = soup.select_one('div .post-container .entry-content').text
         item['tags'] = self.page_tags(soup)
-        item['url'] = response
+        item['url'] = self.news_link
         self.writer_item(item)
+        # button = soup.select_one('.nav-links .next').get('href')
         return item
 
     # format in correct tags
@@ -95,9 +97,7 @@ class VikkatoscrapeSpider(scrapy.Spider):
     def check_date(self):
         format = datetime.datetime.strptime(self.user_date, '%Y/%m/%d')
         now = datetime.datetime.now()
-        check_date = now - format
-        check_date = str(check_date).split(' ')
-        if int(check_date[0]) < 0:
+        if format > now:
             raise BadDate('the date is not yet!')
 
     def check_correct_input(self):
