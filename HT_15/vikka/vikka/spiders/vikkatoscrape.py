@@ -38,10 +38,12 @@ class VikkatoscrapeSpider(scrapy.Spider):
             # if self.news_link:
             #     yield scrapy.Request(url=self.news_link, callback=self.parse_url_page)
             yield scrapy.Request(url=self.news_link, callback=self.parse_url_page)
-
-        button_url = soup.select_one('.nav-links .next').get('href')
-        if button_url is not None:
-            yield scrapy.Request(url=button_url, callback=self.parse_vikka_page)
+        try:
+            button_url = soup.select_one('.nav-links a.next').get('href')
+            if button_url is not None:
+                yield scrapy.Request(url=button_url, callback=self.parse_vikka_page)
+        except:
+            pass
 
 
     # collect all news in selected day
