@@ -3,8 +3,8 @@ https://docs.google.com/forms/d/e/1FAIpQLScLhHgD5pMnwxl8JyRfXXsJekF8_pDG36XtSEwa
 заповнити і відправити її.
 Зберегти два скріншоти: заповненої форми і повідомлення про відправлення форми.
 В репозиторії скріншоти зберегти.'''
-# from time import sleep
 
+from time import sleep
 from selenium import webdriver as wd
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -22,6 +22,7 @@ wait = WebDriverWait(driver, 10)
 block = wait.until(
             EC.presence_of_element_located((By.CSS_SELECTOR, 'div[role="listitem"]')))
 text = block.find_element(By.CSS_SELECTOR, 'input[type="text"]')
+sleep(5)
 text.send_keys(name)
 driver.save_screenshot('first_screen.png')
 button = driver.find_element(By.CSS_SELECTOR, '.freebirdFormviewerViewFormContent .freebirdFormviewerViewNavigationLeftButtons span')
