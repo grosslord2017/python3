@@ -21,8 +21,10 @@ wait = WebDriverWait(driver, 10)
 
 block = wait.until(
             EC.presence_of_element_located((By.CSS_SELECTOR, 'div[role="listitem"]')))
-text = block.find_element(By.CSS_SELECTOR, 'input[type="text"]')
-sleep(5)
+text = wait.until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, 'input[type="text"]')))
+# text = block.find_element(By.CSS_SELECTOR, 'input[type="text"]')
+# sleep(5)
 text.send_keys(name)
 driver.save_screenshot('first_screen.png')
 button = driver.find_element(By.CSS_SELECTOR, '.freebirdFormviewerViewFormContent .freebirdFormviewerViewNavigationLeftButtons span')
