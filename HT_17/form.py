@@ -17,15 +17,16 @@ name = 'Vitalii'
 
 driver = wd.Chrome(executable_path='./chromedriver', options=options)
 driver.get(url_form)
+wait = WebDriverWait(driver, 10)
 
-block = WebDriverWait(driver, 10).until(
+block = wait.until(
             EC.presence_of_element_located((By.CSS_SELECTOR, 'div[role="listitem"]')))
 text = block.find_element(By.CSS_SELECTOR, 'input[type="text"]')
 text.send_keys(name)
 driver.save_screenshot('first_screen.png')
 button = driver.find_element(By.CSS_SELECTOR, '.freebirdFormviewerViewFormContent .freebirdFormviewerViewNavigationLeftButtons span')
 button.click()
-new_page = WebDriverWait(driver, 10).until(
+new_page = wait.until(
             EC.presence_of_element_located((By.CSS_SELECTOR, '.freebirdFormviewerViewResponseConfirmContentContainer')))
 driver.save_screenshot('second_screen.png')
 
