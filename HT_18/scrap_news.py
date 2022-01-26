@@ -15,6 +15,8 @@ askstories, showstories, newstories, jobstories
 
 import csv
 import json
+import sys
+
 import requests
 from pprint import pprint
 
@@ -26,20 +28,18 @@ class BadInput(Exception):
 
 class ScrapeArticles(object):
 
-    def __init__(self):
-        self.category = self.choice_category()
+    def __init__(self, category):
+        self.category = self.choice_category(category)
         self.url = 'https://hacker-news.firebaseio.com/v0/'
 
     def start_program(self):
         list_ids = self.getting_list_ids()
         self.receiving_articles(list_ids)
 
-    def choice_category(self):
-        choice = input('Enter one of category '
-                       '(askstories, showstories, newstories, jobstories): ')
-        if choice in ['askstories', 'showstories', 'newstories', 'jobstories']:
-            return choice
-        elif choice == '':
+    def choice_category(self, category):
+        if category in ['askstories', 'showstories', 'newstories', 'jobstories']:
+            return category
+        elif category == '':
             return 'newstories'
         else:
             raise BadInput('No such category!')
@@ -68,5 +68,6 @@ class ScrapeArticles(object):
             writer.writerows(response_list)
 
 if __name__ == '__main__':
-    articles = ScrapeArticles()
+    category = sys.argv[1]
+    articles = ScrapeArticles(category)
     articles.start_program()
