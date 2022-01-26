@@ -28,19 +28,22 @@ class BadInput(Exception):
 
 class ScrapeArticles(object):
 
-    def __init__(self, category):
-        self.category = self.choice_category(category)
+    def __init__(self):
         self.url = 'https://hacker-news.firebaseio.com/v0/'
 
     def start_program(self):
+        self.choice_category()
         list_ids = self.getting_list_ids()
         self.receiving_articles(list_ids)
 
-    def choice_category(self, category):
-        if category in ['askstories', 'showstories', 'newstories', 'jobstories']:
-            return category
-        elif category == '':
-            return 'newstories'
+    def choice_category(self):
+        if len(sys.argv) < 2:
+            self.category = 'newstories'
+        elif len(sys.argv) == 2:
+            if sys.argv[1] in ['askstories', 'showstories', 'newstories', 'jobstories']:
+                self.category = sys.argv[1]
+            else:
+                raise BadInput('No such category!')
         else:
             raise BadInput('No such category!')
 
@@ -68,6 +71,5 @@ class ScrapeArticles(object):
             writer.writerows(response_list)
 
 if __name__ == '__main__':
-    category = sys.argv[1]
-    articles = ScrapeArticles(category)
+    articles = ScrapeArticles()
     articles.start_program()
