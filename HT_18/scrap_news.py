@@ -60,15 +60,25 @@ class ScrapeArticles(object):
             submission_r = requests.get(url)
             response_dict = submission_r.json()
             response_list.append(response_dict)
-        self.writer_to_csv(response_list)
+        fieldnames = self.heder(response_list)
+        self.writer_to_csv(response_list, fieldnames)
 
-    def writer_to_csv(self, response_list):
+    def writer_to_csv(self, response_list, fieldnames):
         with open(f'{self.category}.csv', "w", encoding='UTF-8', newline='') as file:
             writer = csv.DictWriter(file, restval='', extrasaction='ignore',
-                                    fieldnames=['by', 'descendants', 'id', 'kids', 'score',
-                                                'text', 'time', 'title', 'type', 'url'], delimiter=';')
+                                    fieldnames=fieldnames, delimiter=';')
             writer.writeheader()
             writer.writerows(response_list)
+
+    def heder(self, response_list):
+        fieldnames = []
+        for resp in response_list:
+            for i in resp.keys():
+                if i not in fieldnames:
+                    fieldnames.append(i)
+                else:
+                    continue
+        return fieldnames
 
 if __name__ == '__main__':
     articles = ScrapeArticles()
