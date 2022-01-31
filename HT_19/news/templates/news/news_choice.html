@@ -1,0 +1,20 @@
+{% extends "news/base.html" %}
+
+{% block title %} News Choice {% endblock %}
+
+{% block body%}
+<h1>Какие новости будем стягивать?</h1>
+
+<form action="/scrape/" method="POST">{% csrf_token %}
+<!--<form action="#" method="POST">{% csrf_token %}-->
+    <span class="custom-dropdown big">
+        <select name="news_category">
+            <option value="newstories">new stories</option>
+            <option value="askstories">ask stories</option>
+            <option value="showstories">show stories</option>
+            <option value="jobstories">job stories</option>
+        </select>
+        <button>Выбрать</button>
+    </span>
+</form>
+{% endblock %}
