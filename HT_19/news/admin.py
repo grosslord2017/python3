@@ -6,6 +6,7 @@ from .models import NewStories, ShowStories, AskStories, JobStories
 class NewsCategoryAdmin(admin.ModelAdmin):
     list_display = ('id_news', 'title', 'time')
     list_display_links = ('id_news', 'title')
+    search_fields = ('title',)
 
 admin.site.register(AskStories, NewsCategoryAdmin)
 admin.site.register(NewStories, NewsCategoryAdmin)

@@ -68,7 +68,7 @@ class ScrapeArticles(object):
             print(len(response_list))
             for rl in response_list:
                 try:
-                    examination = NewStories.objects.get(id_news=rl['id'])
+                    NewStories.objects.get(id_news=rl['id'])
                 except:
                     obj = NewStories.objects.create(
                         by=rl.get('by', ''),
@@ -122,10 +122,3 @@ class ScrapeArticles(object):
                         url=rl.get('url', ''),
                     )
                     obj.save()
-
-    def convert_time(self, time):
-        t = time
-        t = time.ctime(t)
-        ts = time.strptime(t)
-        ts_f = time.strftime("%d %b %Y", ts)
-        return ts_f
