@@ -21,7 +21,7 @@ class AskStories(models.Model):
         verbose_name_plural = 'Ask stories'
 
 class ShowStories(models.Model):
-    by = models.CharField(max_length=100, default='')
+    by = models.CharField(max_length=200, default='')
     descendants = models.PositiveIntegerField(default=0)
     id_news = models.PositiveIntegerField(default=0)
     kids = models.TextField(default='')
