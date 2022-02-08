@@ -1,0 +1,25 @@
+{% extends 'user_app/base.html' %}
+{% block title %} Cart {% endblock %}
+
+{% block content %}
+
+    <h1>Item in cart</h1>
+
+    <div>
+        {% for product, cart in products %}
+            <table width="100%" cellspacing="0" cellpadding="4" border="0">
+                <tr>
+                    <td width="90%">
+
+                        <h2>{{ product.name }}</a></h2>
+                        <p>Автор: {{ product.author }}</p>
+                        <p>Описание: {{ product.description }}
+                        <p><a>Цена: {{ product.price }}, количество: {{ cart.count }} шт.</a></p>
+
+                    </td>
+                </tr>
+            </table>
+        {% endfor %}
+    </div>
+
+{% endblock %}

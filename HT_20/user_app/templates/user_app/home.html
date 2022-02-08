@@ -1,0 +1,75 @@
+{% extends 'user_app/base.html' %}
+{% block title %} Home {% endblock %}
+
+{% block content %}
+    {% if messages %}
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+    {% endif %}
+
+<!--    <div>-->
+<!--        {% if not user.username %}-->
+<!--            <button><a href="{% url 'login' %}">Log-in</a></button>-->
+<!--        {% else %}-->
+<!--            <button><a href="{% url 'logout' %}">Log-out</a></button>-->
+<!--            <label> {{user.username}} </label>-->
+
+<!--&lt;!&ndash;            <div style="position: relative; left: 50%">&ndash;&gt;-->
+<!--            <button><a href="{% url 'logout' %}">Log-out</a></button>-->
+<!--            <label> {{user.username}} </label>-->
+<!--        {% endif %}-->
+<!--    </div>-->
+
+    <table width="100%" cellspacing="1" cellpadding="4" border="0">
+        <tr>
+            <td width="50%">
+                <div style="position: relative; left: 10%">
+                    {% if not user.username %}
+                        <button><a href="{% url 'login' %}">Log-in</a></button>
+                    {% else %}
+                        <button><a href="{% url 'logout' %}">Log-out</a></button>
+                        <label> {{user.username}} </label>
+                </div>
+            </td>
+            <td width="50%">
+                <div style="position: relative; left: 90%">
+                    <button><a href="{% url 'cart' %}">Purchase</a></button>
+                    {% endif %}
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <div id="categories">
+        <table width="100%" cellspacing="0" cellpadding="4" border="1">
+            <tr>
+                {% for category in categories %}
+                <td width="200"><a href="{% url 'category' name=category.name %}">{{ category.name }}</a></td>
+                {% endfor %}
+            </tr>
+        </table>
+    </div>
+
+    <div id="product_list">
+        {% for product in products %}
+            <table width="100%" cellspacing="1" cellpadding="4" border="1">
+                <tr>
+                    <td width="90%">
+                        <h2><a href="{% url 'product_info' pk=product.pk %}">{{ product.name }}</a></h2>
+                        <p>Автор: {{ product.author }}</p>
+                        <p>Описание: {{ product.description }}
+                        <p><a>Цена: {{ product.price }}, количество: {{ product.quantity }} шт.</a></p>
+                    </td>
+                    <td width="5%">
+                        <button><a href="{% url 'purchase' pk=product.pk %}">buy</a></button>
+<!--                        {% if user.is_superuser %}-->
+<!--                            <button><a href="{% url 'product_edit' pk=product.pk %}">edit</a></button>-->
+<!--                        {% endif %}-->
+                    </td>
+                </tr>
+            </table>
+        {% endfor %}
+    </div>
+
+{% endblock %}

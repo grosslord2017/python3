@@ -1,0 +1,16 @@
+{% extends 'user_app/base.html' %}
+{% block title %} Log In {% endblock %}
+
+{% for error in form.non_field_errors %}
+    <span class="error-message">{{ error }}</span>
+{% endfor %}
+
+{% block content %}
+    <h1>Log In</h1>
+    <p>Please fill the form</p>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <p><input type="submit" value="Log-in"></p>
+    </form>
+{% endblock %}
