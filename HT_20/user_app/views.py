@@ -85,17 +85,24 @@ def add_to_purchase(request, pk):
 def purchase(request):
     if request.user.username:
         try:
-            carts = Purchase.objects.all()
+            user_id = request.user.id
+            carts = Purchase.objects.all().filter(customer_id=user_id)
             products = []
+            total_sum = 0
+            total_count = 0
 
             for cart in carts:
                 a = []
                 product = Product.objects.get(id=cart.item_id)
+                total_sum += product.price * cart.count
+                total_count += cart.count
                 a.append(product)
                 a.append(cart)
                 products.append(a)
 
-            return render(request, 'user_app/purchase.html', {'products': products})
+            return render(request, 'user_app/purchase.html', {'products': products,
+                                                              'total_sum': total_sum,
+                                                              'total_count': total_count})
         except:
             return HttpResponse('Cart is Empty')
     else:
