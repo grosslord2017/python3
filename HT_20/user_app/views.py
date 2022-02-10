@@ -50,16 +50,20 @@ def delete(request, pk):
     return HttpResponse('Delete complite')
 
 def product_edit(request, pk):
-    product = Product.objects.get(pk=pk)
-    if request.method == 'POST':
-        form = EditProduct(request.POST, instance=product)
-        if form.is_valid():
-            product.save()
-            massage = f'Changes complite in {product.name}'
-            return render(request, 'user_app/product_edit.html', {'form': form, 'massage': massage})
+    if request.user.is_superuser:
+        product = Product.objects.get(pk=pk)
+        if request.method == 'POST':
+            form = EditProduct(request.POST, instance=product)
+            if form.is_valid():
+                product.save()
+                massage = f'Changes complite in {product.name}'
+                return render(request, 'user_app/product_edit.html', {'form': form, 'massage': massage})
+        else:
+            form = EditProduct(instance=product)
+        return render(request, 'user_app/product_edit.html', {'form': form, 'product': product})
     else:
-        form = EditProduct()
-    return render(request, 'user_app/product_edit.html', {'form': form, 'product': product})
+        messages.add_message(request, messages.ERROR, 'YOUR ARE NOT ADMIN')
+        return HttpResponseRedirect('/')
 
 def category(request, name):
     category = Category.objects.get(name=name)
@@ -79,17 +83,20 @@ def add_to_purchase(request, pk):
     return HttpResponseRedirect('/')
 
 def purchase(request):
-    try:
-        carts = Purchase.objects.all()
-        products = []
+    if request.user.username:
+        try:
+            carts = Purchase.objects.all()
+            products = []
 
-        for cart in carts:
-            a = []
-            product = Product.objects.get(id=cart.item_id)
-            a.append(product)
-            a.append(cart)
-            products.append(a)
+            for cart in carts:
+                a = []
+                product = Product.objects.get(id=cart.item_id)
+                a.append(product)
+                a.append(cart)
+                products.append(a)
 
-        return render(request, 'user_app/purchase.html', {'products': products})
-    except:
-        return HttpResponse('Cart is Empty')
+            return render(request, 'user_app/purchase.html', {'products': products})
+        except:
+            return HttpResponse('Cart is Empty')
+    else:
+        return HttpResponseRedirect('/login/')

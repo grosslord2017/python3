@@ -14,9 +14,11 @@
                         <p>Описание: {{ product.description }}
                         <p><a>Цена: {{ product.price }}, количество: {{ product.quantity }} шт.</a></p>
                     </td>
-                    <td width="5%">
-                        <button><a href="">buy</a></button>
-                    </td>
+                    {% if user.username %}
+                        <td width="5%">
+                            <button><a href="">buy</a></button>
+                        </td>
+                    {% endif %}
                 </tr>
             </table>
         {% endfor %}
