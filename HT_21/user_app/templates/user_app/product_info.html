@@ -1,0 +1,30 @@
+{% extends 'user_app/base.html' %}
+{% block title %} {{ product.name }} {% endblock %}
+
+{% block content %}
+    <div>
+        <h1>{{ product.name }}</h1>
+        <p>Автор: {{ product.author }}</p>
+        <a>Наличие: {{ product.is_active }}</a>
+    </div>
+    <div>
+        <p>{{ product.description }}</p>
+    </div>
+    <div>
+        <div>
+            <p>Цена: {{ product.price}}</p>
+        </div>
+        <div>
+            <p>Количество: {{ product.quantity }}</p>
+        </div>
+    </div>
+
+    {% if user.is_authenticated %}
+        <button><a href="{% url 'product_edit' pk=product.pk %}">edit</a></button>
+    {% endif %}
+    {% if user.is_superuser %}
+        <button><a href="{% url 'delete_product' pk=product.pk %}">delete</a></button>
+    {% endif %}
+
+
+{% endblock %}

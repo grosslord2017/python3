@@ -1,0 +1,107 @@
+{% extends 'user_app/base.html' %}
+{% block title %} Home {% endblock %}
+
+{% block content %}
+    {% if messages %}
+            {% for message in messages %}
+<p xmlns="http://www.w3.org/1999/html">{{ message }}</p>
+            {% endfor %}
+    {% endif %}
+
+    <table width="100%" cellspacing="1" cellpadding="4" border="0">
+        <tr>
+            <td width="50%">
+                <div style="position: relative; left: 10%">
+                    {% if not user.username %}
+                        <button><a href="{% url 'login' %}">Log-in</a></button>
+                    {% else %}
+                        <button><a href="{% url 'logout' %}">Log-out</a></button>
+                        <label> {{user.username}} </label>
+                    {% endif %}
+                </div>
+            </td>
+            {% if user.username %}
+                <td width="50%">
+                    <div style="position: relative; left: 90%">
+                        <button><a href="{% url 'cart' %}">Cart</a></button>
+                    </div>
+                </td>
+            {% endif %}
+        </tr>
+    </table>
+
+    <div id="categories">
+        <table width="100%" cellspacing="0" cellpadding="4" border="1">
+            <tr>
+                {% for category in categories %}
+                <td width="200"><a href="{% url 'category' name=category.name %}">{{ category.name }}</a></td>
+                {% endfor %}
+            </tr>
+        </table>
+    </div>
+
+    <div id="product_list">
+        {% for product in products %}
+            <table width="100%" cellspacing="1" cellpadding="4" border="1">
+                <tr>
+                    <td width="80%">
+                        <h2><a href="{% url 'product_info' pk=product.pk %}">{{ product.name }}</a></h2>
+                        <p>Автор: {{ product.author }}</p>
+                        <p>Описание: {{ product.description }}
+                        <p>Цена: {{ product.price }} </p>
+                        <p>количество: <span data-productid="{{ product.id }}">{{ product.quantity}}</span> шт.</p>
+                    </td>
+
+                    {% if user.username %}
+
+                        <td width="20%">
+                            {% if product.is_active %}
+                                <button id="{{ product.id }}" class="add-to-cart-btn" data-productid="{{ product.id }}">Buy</button>
+                            {% else %}
+                                <p>Not available</p>
+                            {% endif %}
+                        </td>
+
+                    {% endif %}
+
+                </tr>
+            </table>
+        {% endfor %}
+    </div>
+
+    <script>
+
+        var addToCartUrl = "{% url 'add_to_cart' %}";
+        csrfToken = '{{ csrf_token }}';
+        var addToCartBtns = document.querySelectorAll('.add-to-cart-btn');
+
+        addToCartBtns.forEach(el => {
+            el.addEventListener('click', function(e) {
+
+                var productId = event.target.dataset.productid;
+                var xmlhttp = new XMLHttpRequest();
+                xmlhttp.open('POST', addToCartUrl);
+                xmlhttp.setRequestHeader('Content-Type', 'application/json');
+                xmlhttp.setRequestHeader('X-CSRFToken', csrfToken);
+                xmlhttp.onreadystatechange = function () {
+
+                    if (this.readyState === 4 && this.status === 200) {
+                        var response = JSON.parse(this.responseText);
+                        if (!response.error) {
+                            document.querySelector('span[data-productid="' + productId + '"]').innerText = response['qte'];
+                        } else {
+                            console.error(response.error);
+                        }
+                    }
+                }
+            xmlhttp.send(JSON.stringify({product_id: productId}));
+
+            })
+        })
+
+
+
+
+    </script>
+
+{% endblock %}
