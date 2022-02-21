@@ -1,0 +1,17 @@
+{% extends "news/base.html" %}
+
+{% block title %} {{ category }} {% endblock %}
+
+{% block body%}
+    <h1>{{ category }}</h1>
+
+    {% for news in news_category %}
+        <table>
+            <tr>
+                <td>{{ news.id }}</td>
+                <td>{{ news.title }}</td>
+            </tr>
+        </table>
+    {% endfor %}
+
+{% endblock %}

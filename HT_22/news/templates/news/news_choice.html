@@ -1,0 +1,47 @@
+{% extends "news/base.html" %}
+
+{% block title %} News Choice {% endblock %}
+
+{% block body%}
+    <table>
+        <tr>
+            <td>
+                <form action="news/" method="POST">{% csrf_token %}
+                     <button name="news" type="submit" value="newstories">new stories</button>
+                </form>
+            </td>
+            <td>
+                <form action="news/" method="POST">{% csrf_token %}
+                    <button name="news" type="submit" value="askstories">ask stories</button>
+                </form>
+            </td>
+            <td>
+                <form action="news/" method="POST">{% csrf_token %}
+                    <button name="news" type="submit" value="showstories">show stories</button>
+                </form>
+            </td>
+            <td>
+                <form action="news/" method="POST">{% csrf_token %}
+                    <button name="news" type="submit" value="jobstories">job stories</button>
+                </form>
+            </td>
+        </tr>
+    </table>
+
+    <h1>Какие новости будем стягивать?</h1>
+    <table>
+        <form action="" method="POST">{% csrf_token %}
+        <!--<form action="#" method="POST">{% csrf_token %}-->
+            <span class="custom-dropdown big">
+                <select name="news_category">
+                    <option value="newstories">new stories</option>
+                    <option value="askstories">ask stories</option>
+                    <option value="showstories">show stories</option>
+                    <option value="jobstories">job stories</option>
+                </select>
+                <button>Выбрать</button>
+            </span>
+        </form>
+    </table>
+
+{% endblock %}
